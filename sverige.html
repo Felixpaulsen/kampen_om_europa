@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sverige</title>
+<style>
+  :root {
+    --bg: #014F8E;
+    --card: #1D3B34;
+    --ink: #F4C409;
+    --muted: #9FB3AC;
+    --accent: #F4C409;
+    --accent-dim: #6B5A3A;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8vh;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    margin: 0 0 4rem 0;
+    text-align: center;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .result {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: var(--accent);
+    min-height: 1.2em;
+    line-height: 1;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 1.05rem;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 0.9em 2.2em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>Velkommen til Sverige!</h1>
+
+  <div class="stage">
+    <div class="result" id="result"></div>
+    <button id="rollBtn" onclick="roll()">Afslør svensk ord</button>
+  </div>
+
+  <script>
+    function roll() {
+      const myList = [
+        "Kanelsnegl",
+        "Marabou",
+        "Stockholm",
+        "Pippi",
+        "ABBA",
+        "Fika",
+        "Midsommer",
+        "Nobelprisen",
+        "Surstrømming",
+        "Volvo"
+      ]
+      const n = Math.floor(Math.random()*10);
+      const txt = myList[n].toLowerCase();
+      document.getElementById('result').textContent = shuffleString(txt);
+      const btn = document.getElementById('rollBtn');
+      btn.remove();
+    }
+
+    function shuffleString(str) {
+        const chars = str.split('');
+
+        for (let i = chars.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [chars[i], chars[j]] = [chars[j], chars[i]];
+        }
+
+        return chars.join('');
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frankrig</title>
+<style>
+  :root {
+    --bg: #16302B;
+    --card: #1D3B34;
+    --ink: #F2EEE3;
+    --muted: #9FB3AC;
+    --accent: #E4A24B;
+    --accent-dim: #6B5A3A;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8vh;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    margin: 0 0 4rem 0;
+    text-align: center;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .result {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: var(--accent);
+    min-height: 1.2em;
+    line-height: 1;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 1.05rem;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 0.9em 2.2em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>Velkommen til Frankrig!</h1>
+
+  <div class="stage">
+    <div class="result" id="result"></div>
+    <button id="rollBtn" onclick="roll()">Afslør fransk ord</button>
+  </div>
+
+  <script>
+    function roll() {
+      const myList = [
+        "Eiffeltårnet",
+        "Mona Lisa",
+        "Vin",
+        "Croissant",
+        "Tour de France",
+        "Champagne",
+        "Baguette",
+        "Louvre",
+        "Snegle",
+        "Napoleon"
+      ]
+      const n = Math.floor(Math.random()*10);
+      const txt = myList[n];
+      document.getElementById('result').textContent = txt;
+      const btn = document.getElementById('rollBtn');
+      btn.remove();
+    }
+  </script>
+
+</body>
+</html>
