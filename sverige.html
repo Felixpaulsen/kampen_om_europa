@@ -66,6 +66,42 @@
     font-size: 1.4rem;
     color: var(--ink);
     min-height: 1.2em;
+    margin-bottom: 3rem;
+  }
+
+  #actionSlot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .guess-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .guess-form input {
+    font-family: inherit;
+    font-size: 1.05rem;
+    text-align: center;
+    padding: 0.7em 1em;
+    border-radius: 4px;
+    border: 2px solid var(--accent);
+    background: transparent;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .guess-form input:disabled {
+    opacity: 0.6;
+  }
+
+  .feedback {
+    font-size: 1.2rem;
+    font-weight: bold;
   }
 
   button {
@@ -97,16 +133,12 @@
 <body>
 
   <h1>🇸🇪🇸🇪🇸🇪🇸🇪🇸🇪🇸🇪<br><br>Velkommen til Sverige!</h1>
-  <p>Din makker og du skal gætte hvilken<br>
-    svensk ting, der gemmer sig bag<br>
-    anagrammet.<br><br>
+  <p>Din makker og du skal gætte hvilken svensk ting, der gemmer sig bag anagrammet.<br><br>
     Tid: 2 minutter<br>
     Antal gæt: 1<br><br>
     I skal gætte INDEN tiden er gået.<br><br>
-    Tiden starter automatisk, når I<br>
-    trykker på knappen.<br><br>
-    Hvis I gætter den svenske ting<br>
-    må I indtage Sverige på kortet.<br><br></p>
+    Tiden starter automatisk, når I trykker på knappen.<br><br>
+    Hvis I gætter den svenske ting, må I indtage Sverige på kortet.<br><br></p>
 
   <div class="stage">
     <div id="actionSlot">
@@ -116,6 +148,8 @@
   </div>
 
   <script>
+    let correctAnswer = '';
+
     function roll() {
       const myList = [
         "Kanelsnegl",
@@ -131,7 +165,8 @@
       ]
       const n = Math.floor(Math.random()*10);
       const txt = myList[n].toLowerCase();
-      
+      correctAnswer = txt;
+
       let shuffled = txt;
       let attempts = 0;
       while (shuffled === txt && attempts < 100) {
@@ -139,7 +174,13 @@
         attempts++;
       }
 
-      document.getElementById('actionSlot').innerHTML = '<div class="result" id="result">' + shuffled + '</div>';
+      document.getElementById('actionSlot').innerHTML =
+        '<div class="result" id="result">' + shuffled + '</div>' +
+        '<div class="guess-form">' +
+          '<input type="text" id="guessInput" placeholder="Jeres gæt" autocomplete="off" onkeydown="if(event.key===\'Enter\') submitGuess()">' +
+          '<button id="guessBtn" onclick="submitGuess()">Aflevér gæt</button>' +
+        '</div>';
+      document.getElementById('guessInput').focus();
 
       startTimer(120);
     }
@@ -160,12 +201,52 @@
         remaining--;
         update();
 
-        if (remaining <= 0) {
+        if (remaining <= 0 && document.getElementById('timer') != null) {
           clearInterval(interval);
-          document.getElementById('result').textContent = '';
-          timerEl.textContent = 'Tiden er gået!';
+          document.getElementById('result').textContent = 'Tiden gik';
+          document.getElementById('result').style.fontSize = '1.4rem';
+          timerEl.remove();
+          lockGuessForm();
         }
       }, 1000);
+    }
+
+    function lockGuessForm() {
+      timeUp = true;
+      const input = document.getElementById('guessInput');
+      const btn = document.getElementById('guessBtn');
+      if (!input || !btn) return;
+
+      if (!input.disabled) {
+        document.getElementById('guessBtn').remove();
+        document.getElementById('guessInput').remove();
+      }
+
+      input.disabled = true;
+      btn.disabled = true;
+    }
+
+    let timeUp = false;
+
+    function submitGuess() {
+      if (timeUp) return;
+
+      const input = document.getElementById('guessInput');
+      const guess = input.value.trim().toLowerCase();
+      if (guess === "") return;
+
+      const isCorrect = guess === correctAnswer;
+
+      const feedback = document.createElement('div');
+      feedback.className = 'feedback';
+      feedback.textContent = isCorrect ? 'Rigtigt! I må indtage Sverige.' : 'Forkert gæt!';
+
+      const form = input.closest('.guess-form');
+      form.appendChild(feedback);
+
+      input.disabled = true;
+      document.getElementById('guessBtn').remove();
+      document.getElementById('timer').remove();
     }
 
     function shuffleString(str) {
