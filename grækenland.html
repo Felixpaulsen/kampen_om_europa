@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Frankrig</title>
+<title>Grækenland</title>
 <style>
   :root {
     --bg: #F7F7F7;
     --card: #1D3B34;
-    --ink: #032D60;
+    --ink: #0D5BAA;
     --muted: #9FB3AC;
-    --accent: #C81026;
+    --accent: #0D5BAA;
     --accent-dim: #6B5A3A;
   }
 
@@ -96,17 +96,18 @@
 </head>
 <body>
 
-  <h1>🇫🇷🇫🇷🇫🇷🇫🇷🇫🇷🇫🇷<br><br>Velkommen til Frankrig!</h1>
-  <p>Landet som er kendt over hele verden, for alt fra kunst til mad.<br><br>
-    Din makker skal gætte din franske ting. Din makker må stille 10 spørgsmål<br><br>
-    Du må kun svare <b>ja</b>, <b>nej</b> eller <b>pas</b>.<br><br>
-    Hvis din makker gætter din franske ting<br>
-    må I indtage Frankrig på kortet.<br><br>
-    Antal spørgsmål: 10</p>
+  <h1>🇬🇷🇬🇷🇬🇷🇬🇷🇬🇷🇬🇷<br><br>Velkommen til Grækenland!</h1>
+  <p>En stor del af de ting vi kender til i dag, har deres oprindelse i<br>
+    Det Gamle Grækenland. Dette gælder også kunsten at mime<br><br>
+    Du skal nu mime en græske ting, og din makker skal gætte,<br>
+    hvad du mimer. Din makker har 5 gæt.<br><br>
+    Hvis din makker gætter din græske ting<br>
+    må I indtage Grækenland på kortet.<br><br>
+    Antal gæt: 5</p>
 
   <div class="stage">
     <div id="actionSlot">
-      <button id="rollBtn" onclick="roll()">Vis fransk ting</button>
+      <button id="rollBtn" onclick="roll()">Vis græsk ting</button>
     </div>
     <div class="timer" id="timer"></div>
   </div>
@@ -114,16 +115,16 @@
   <script>
     function roll() {
       const myList = [
-        "Eiffeltårnet",
-        "Mona Lisa",
-        "Vin",
-        "Croissant",
-        "Tour de France",
-        "Champagne",
-        "Baguette",
-        "Louvre",
-        "Snegle",
-        "Napoleon"
+        "Zeus",
+        "Tempel",
+        "Filosofi",
+        "Demokrati",
+        "Tusinde øer",
+        "Græsk salat",
+        "Olympiske lege",
+        "Marathon",
+        "Oliventræ",
+        "Fetaost"
       ]
       
       const n = Math.floor(Math.random()*10);
