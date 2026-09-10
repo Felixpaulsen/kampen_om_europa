@@ -39,19 +39,31 @@
     text-align: center;
   }
 
+  p {
+    text-align: center;
+  }
+
   .stage {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2.5rem;
+    margin-top: 3rem;
   }
 
   .result {
     font-family: 'Courier New', monospace;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-size: clamp(2rem, 7vw, 3.5rem);
     color: var(--accent);
     min-height: 1.2em;
     line-height: 1;
+  }
+
+  .timer {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4rem;
+    color: var(--ink);
+    min-height: 1.2em;
   }
 
   button {
@@ -83,10 +95,16 @@
 <body>
 
   <h1>Velkommen til Sverige!</h1>
+  <p>Gæt hvilken svensk ting, der gemmer sig bag anagrammet.<br>
+    I har 1 minut. I må kun komme med ét gæt, og I skal gætte inden tiden er gået.<br><br>
+    Hvis I lykkes må I indtage Sverige.<br><br>
+    Tiden starter automatisk, når I trykker på knappen.</p>
 
   <div class="stage">
-    <div class="result" id="result"></div>
-    <button id="rollBtn" onclick="roll()">Afslør svensk ord</button>
+    <div id="actionSlot">
+      <button id="rollBtn" onclick="roll()">Afslør svensk ting</button>
+    </div>
+    <div class="timer" id="timer"></div>
   </div>
 
   <script>
@@ -105,9 +123,34 @@
       ]
       const n = Math.floor(Math.random()*10);
       const txt = myList[n].toLowerCase();
-      document.getElementById('result').textContent = shuffleString(txt);
-      const btn = document.getElementById('rollBtn');
-      btn.remove();
+      const shuffled = shuffleString(txt);
+      document.getElementById('actionSlot').innerHTML = '<div class="result" id="result">' + shuffled + '</div>';
+
+      startTimer(60);
+    }
+
+    function startTimer(seconds) {
+      const timerEl = document.getElementById('timer');
+      let remaining = seconds;
+
+      const update = () => {
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        timerEl.textContent = mins + ':' + String(secs).padStart(2, '0');
+      };
+
+      update();
+
+      const interval = setInterval(() => {
+        remaining--;
+        update();
+
+        if (remaining <= 0) {
+          clearInterval(interval);
+          document.getElementById('result').textContent = '';
+          timerEl.textContent = 'Tiden er gået!';
+        }
+      }, 1000);
     }
 
     function shuffleString(str) {
