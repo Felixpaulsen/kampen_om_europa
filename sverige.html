@@ -35,7 +35,7 @@
     font-size: clamp(1.8rem, 4vw, 2.6rem);
     font-weight: 400;
     letter-spacing: 0.01em;
-    margin: 0 0 4rem 0;
+    margin: 0 0 2rem 0;
     text-align: center;
   }
 
@@ -95,8 +95,9 @@
 <body>
 
   <h1>Velkommen til Sverige!</h1>
-  <p>Gæt hvilken svensk ting, der gemmer sig bag anagrammet. I har 1 minut.<br>
-    I må kun komme med ét gæt, og I skal gætte INDEN tiden er gået.<br><br>
+  <p>Gæt hvilken svensk ting, der gemmer sig bag anagrammet.<br><br>
+    I har 1 minut. I må kun komme med ét gæt.<br>
+    I skal gætte INDEN tiden er gået.<br><br>
     Hvis I lykkes må I indtage Sverige.<br><br>
     Tiden starter automatisk, når I trykker på knappen.</p>
 
@@ -123,10 +124,17 @@
       ]
       const n = Math.floor(Math.random()*10);
       const txt = myList[n].toLowerCase();
-      const shuffled = shuffleString(txt);
+      
+      let shuffled = txt;
+      let attempts = 0;
+      while (shuffled === txt && attempts < 100) {
+        shuffled = shuffleString(txt);
+        attempts++;
+      }
+
       document.getElementById('actionSlot').innerHTML = '<div class="result" id="result">' + shuffled + '</div>';
 
-      startTimer(60);
+      startTimer(120);
     }
 
     function startTimer(seconds) {
