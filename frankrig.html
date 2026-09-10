@@ -6,11 +6,11 @@
 <title>Frankrig</title>
 <style>
   :root {
-    --bg: #16302B;
+    --bg: #F7F7F7;
     --card: #1D3B34;
-    --ink: #F2EEE3;
+    --ink: #032D60;
     --muted: #9FB3AC;
-    --accent: #E4A24B;
+    --accent: #C81026;
     --accent-dim: #6B5A3A;
   }
 
@@ -35,7 +35,11 @@
     font-size: clamp(1.8rem, 4vw, 2.6rem);
     font-weight: 400;
     letter-spacing: 0.01em;
-    margin: 0 0 4rem 0;
+    margin: 0 0 2rem 0;
+    text-align: center;
+  }
+
+  p {
     text-align: center;
   }
 
@@ -44,14 +48,22 @@
     flex-direction: column;
     align-items: center;
     gap: 2.5rem;
+    margin-top: 3rem;
   }
 
   .result {
     font-family: 'Courier New', monospace;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-size: clamp(2rem, 7vw, 3.5rem);
     color: var(--accent);
     min-height: 1.2em;
     line-height: 1;
+  }
+
+  .timer {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4rem;
+    color: var(--ink);
+    min-height: 1.2em;
   }
 
   button {
@@ -82,11 +94,18 @@
 </head>
 <body>
 
-  <h1>Velkommen til Frankrig!</h1>
+  <h1>🇫🇷🇫🇷🇫🇷🇫🇷🇫🇷🇫🇷🇫🇷🇫🇷🇫🇷<br><br>Velkommen til Frankrig!</h1>
+  <p>Landet som er kendt over hele verden, for alt fra kunst til mad.<br><br>
+    Din makker skal gætte din franske ting. Din makker må stille 10 spørgsmål<br>
+    Du må kun svare <b>ja</b>, <b>nej</b> eller <b>pas</b>. Hvis din makker gætter din franske ting<br>
+    må I indtage Frankrig på kortet.<br><br>
+    Antal spørgsmål: 10</p>
 
   <div class="stage">
-    <div class="result" id="result"></div>
-    <button id="rollBtn" onclick="roll()">Afslør fransk ord</button>
+    <div id="actionSlot">
+      <button id="rollBtn" onclick="roll()">Afslør fransk ting</button>
+    </div>
+    <div class="timer" id="timer"></div>
   </div>
 
   <script>
@@ -103,11 +122,46 @@
         "Snegle",
         "Napoleon"
       ]
+      
       const n = Math.floor(Math.random()*10);
       const txt = myList[n];
-      document.getElementById('result').textContent = txt;
-      const btn = document.getElementById('rollBtn');
-      btn.remove();
+
+      document.getElementById('actionSlot').innerHTML = '<div class="result" id="result">' + txt + '</div>';
+    }
+
+    function startTimer(seconds) {
+      const timerEl = document.getElementById('timer');
+      let remaining = seconds;
+
+      const update = () => {
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        timerEl.textContent = mins + ':' + String(secs).padStart(2, '0');
+      };
+
+      update();
+
+      const interval = setInterval(() => {
+        remaining--;
+        update();
+
+        if (remaining <= 0) {
+          clearInterval(interval);
+          document.getElementById('result').textContent = '';
+          timerEl.textContent = 'Tiden er gået!';
+        }
+      }, 1000);
+    }
+
+    function shuffleString(str) {
+        const chars = str.split('');
+
+        for (let i = chars.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [chars[i], chars[j]] = [chars[j], chars[i]];
+        }
+
+        return chars.join('');
     }
   </script>
 
