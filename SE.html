@@ -54,7 +54,7 @@
   }
 
   .result {
-    font-family: 'Courier New', monospace;
+    font-family: 'Georgia', 'Iowan Old Style', serif;
     font-size: clamp(2rem, 7vw, 3.5rem);
     color: var(--accent);
     min-height: 1.2em;
@@ -62,7 +62,7 @@
   }
 
   .timer {
-    font-family: 'Courier New', monospace;
+    font-family: 'Georgia', 'Iowan Old Style', serif;
     font-size: 1.4rem;
     color: var(--ink);
     min-height: 1.2em;
@@ -84,7 +84,7 @@
   }
 
   .guess-form input {
-    font-family: inherit;
+    font-family: 'Georgia', 'Iowan Old Style', serif;
     font-size: 1.05rem;
     text-align: center;
     padding: 0.7em 1em;
@@ -105,7 +105,7 @@
   }
 
   button {
-    font-family: inherit;
+    font-family: 'Georgia', 'Iowan Old Style', serif;
     font-size: 1.05rem;
     color: var(--bg);
     background: var(--accent);
@@ -148,6 +148,7 @@
   </div>
 
   <script>
+    var snd = new Audio("timer.mp3");
     let correctAnswer = '';
 
     function roll() {
@@ -203,6 +204,7 @@
 
         if (remaining <= 0 && document.getElementById('timer') != null) {
           clearInterval(interval);
+          snd.play();
           document.getElementById('result').textContent = 'Tiden gik';
           document.getElementById('result').style.fontSize = '1.4rem';
           timerEl.remove();

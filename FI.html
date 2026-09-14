@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finland</title>
+<style>
+  :root {
+    --bg: #FEFEFE;
+    --card: #1D3B34;
+    --ink: #11298D;
+    --muted: #9FB3AC;
+    --accent: #11298D;
+    --accent-dim: #6B5A3A;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8vh;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    margin: 0 0 2rem 0;
+    text-align: center;
+  }
+
+  p {
+    text-align: center;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    margin-top: 3rem;
+  }
+
+  .result {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: clamp(2rem, 7vw, 3.5rem);
+    color: var(--accent);
+    min-height: 1.2em;
+    line-height: 1;
+  }
+
+  .timer {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: 1.4rem;
+    color: var(--ink);
+    min-height: 1.2em;
+    margin-bottom: 3rem;
+  }
+
+  #actionSlot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .guess-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .guess-form input {
+    font-family: inherit;
+    font-size: 1.05rem;
+    text-align: center;
+    padding: 0.7em 1em;
+    border-radius: 4px;
+    border: 2px solid var(--accent);
+    background: transparent;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .guess-form input:disabled {
+    opacity: 0.6;
+  }
+
+  .feedback {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 1.05rem;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 0.9em 2.2em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>🇫🇮🇫🇮🇫🇮🇫🇮🇫🇮🇫🇮<br><br>Velkommen til Finland!</h1>
+  <p>Med over 188.000 søer, er Finland det land i Europa, der har allerflest søer. Hjælp dit land med at slå rekorden.<br><br>
+  Din makker og du har <b>5 minutter</b> til at bygge en sø. Søen skal indeholde mindst en liter vand, et blad fra en levende plante og en badebro.
+Hvis I lykkes må I indtage Finland.<br><br>
+I må ikke gå i gang, finde ting eller snakke taktik før tiden er sat i gang.</p>
+
+  <div class="stage">
+    <div id="actionSlot">
+      <button id="rollBtn" onclick="startTimer(5)">Start tid</button>
+    </div>
+    <div class="timer" id="timer"></div>
+  </div>
+
+  <script>
+    var snd = new Audio("timer.mp3");
+    function startTimer(seconds) {
+      const timerEl = document.getElementById('timer');
+      document.getElementById('rollBtn').remove();
+      let remaining = seconds;
+
+      const update = () => {
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        timerEl.textContent = mins + ':' + String(secs).padStart(2, '0');
+      };
+
+      update();
+
+      const interval = setInterval(() => {
+        remaining--;
+        update();
+
+        if (remaining <= 0 && document.getElementById('timer') != null) {
+          clearInterval(interval);
+          document.getElementById('timer').textContent = 'Tiden er gået!';
+          snd.play();
+        }
+      }, 1000);
+    }
+
+    let timeUp = false;
+
+  </script>
+
+</body>
+</html>
