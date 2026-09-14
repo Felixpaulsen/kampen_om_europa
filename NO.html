@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Norge</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --card: #1D3B34;
+    --ink: #00205B;
+    --muted: #9FB3AC;
+    --accent: #BA0C2F;
+    --accent-dim: #6B5A3A;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8vh;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    margin: 0 0 2rem 0;
+    text-align: center;
+  }
+
+  p {
+    text-align: center;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    margin-top: 3rem;
+  }
+
+  .result {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: clamp(2rem, 7vw, 3.5rem);
+    color: var(--accent);
+    min-height: 1.2em;
+    line-height: 1;
+  }
+
+  .timer {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: 1.4rem;
+    color: var(--ink);
+    min-height: 1.2em;
+  }
+
+  button {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: 1.05rem;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 0.9em 2.2em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>🇳🇴🇳🇴🇳🇴🇳🇴🇳🇴🇳🇴<br><br>Velkommen til Norge!</h1>
+  <p>Et land kendt for sine bjerge, fjorde og smukke landskaber.<br><br>
+  Din makker skal gætte højden på et norsk bjerg. Din makker har kun <b>tre gæt</b>. Efter de første to gæt må du sige, om gættet var for lavt eller for højt.<br><br>
+  Du må gerne fortælle din makker navnet på bjerget.<br><br>
+Gætter din makker indenfor 100 meter over eller under, må I indtage Norge.</p>
+
+  <div class="stage">
+    <div id="actionSlot">
+      <button id="rollBtn" onclick="roll()">Vis bjerg</button>
+    </div>
+    <div class="timer" id="timer"></div>
+  </div>
+
+  <script>
+    function roll() {
+      const myList = [
+        "Knutsholstinden: 2185m",
+        "Stølsmaradalstinden: 2026m",
+        "Tverråtinden: 2302m",
+        "Rauddalstinden: 2059m",
+        "Store Ringstinden: 2124m",
+        "Skagsnebb: 2003m",
+        "Visbreatinden: 2234m",
+        "Holåtindan: 1964m",
+        "Urdanostindene: 2157m",
+        "Rauddalstinden: 2086m"
+      ]
+      
+      const n = Math.floor(Math.random()*10);
+      const txt = myList[n];
+
+      document.getElementById('actionSlot').innerHTML = '<div class="result" id="result">' + txt + '</div>';
+    }
+
+    function startTimer(seconds) {
+      const timerEl = document.getElementById('timer');
+      let remaining = seconds;
+
+      const update = () => {
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        timerEl.textContent = mins + ':' + String(secs).padStart(2, '0');
+      };
+
+      update();
+
+      const interval = setInterval(() => {
+        remaining--;
+        update();
+
+        if (remaining <= 0) {
+          clearInterval(interval);
+          document.getElementById('result').textContent = '';
+          timerEl.textContent = 'Tiden er gået!';
+        }
+      }, 1000);
+    }
+
+    function shuffleString(str) {
+        const chars = str.split('');
+
+        for (let i = chars.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [chars[i], chars[j]] = [chars[j], chars[i]];
+        }
+
+        return chars.join('');
+    }
+  </script>
+
+</body>
+</html>
