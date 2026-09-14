@@ -12,6 +12,8 @@
     --muted: #9FB3AC;
     --accent: #CC2C3D;
     --accent-dim: #6B5A3A;
+    --ok: #4E8B5C;
+    --bad: #CC2C3D;
   }
 
   * { box-sizing: border-box; }
@@ -31,6 +33,7 @@
     padding-top: 8vh;
     padding-left: 2rem;
     padding-right: 2rem;
+    padding-bottom: 4rem;
   }
 
   h1 {
@@ -43,6 +46,7 @@
 
   p {
     text-align: center;
+    max-width: 40rem;
   }
 
   .stage {
@@ -54,11 +58,12 @@
   }
 
   .result {
-    font-family: 'Courier New', monospace;
-    font-size: clamp(2rem, 7vw, 3.5rem);
-    color: var(--accent);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    color: var(--ink);
     min-height: 1.2em;
-    line-height: 1;
+    line-height: 1.4;
+    text-align: center;
   }
 
   .timer {
@@ -84,53 +89,327 @@
     transform: translateY(-2px);
   }
 
+  button:disabled {
+    background: var(--muted);
+    cursor: not-allowed;
+    transform: none;
+  }
+
   button:focus-visible {
     outline: 2px solid var(--ink);
     outline-offset: 3px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    button { transition: none; }
+  /* --- Matching area --- */
+
+  .match-area {
+    display: flex;
+    gap: 3rem;
+    margin-top: 2.5rem;
+    width: 100%;
+    max-width: 32rem;
+    justify-content: center;
   }
+
+  .match-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  #huCol, #daCol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .match-col-label {
+    text-align: center;
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+  }
+
+  .word-item {
+    font-family: inherit;
+    font-size: 1.05rem;
+    color: var(--ink);
+    background: #fff;
+    border: 2px solid var(--muted);
+    border-radius: 6px;
+    padding: 0.7em 1em;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+    user-select: none;
+  }
+
+  .word-item:hover:not(.matched):not(.locked) {
+    transform: translateY(-1px);
+    border-color: var(--accent);
+  }
+
+  .word-item.selected {
+    border-color: var(--accent);
+    border-style: dashed;
+    background: #fff6f6;
+  }
+
+  .word-item.matched {
+    font-weight: bold;
+    color: #fff;
+  }
+
+  .word-item.locked {
+    cursor: default;
+  }
+
+  .word-item.correct {
+    background: var(--ok) !important;
+    border-color: var(--ok) !important;
+    color: #fff;
+  }
+
+  .word-item.incorrect {
+    background: var(--bad) !important;
+    border-color: var(--bad) !important;
+    color: #fff;
+  }
+
+  .hint {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+
+  /* pair colours, assigned in order as pairs are made */
+  .pair-0 { background: #CC2C3D; border-color: #CC2C3D; }
+  .pair-1 { background: #3E7CC9; border-color: #3E7CC9; }
+  .pair-2 { background: #C98A3E; border-color: #C98A3E; }
+  .pair-3 { background: #6FA85A; border-color: #6FA85A; }
+  .pair-4 { background: #8A5CC9; border-color: #8A5CC9; }
+  .pair-5 { background: #2C9E8F; border-color: #2C9E8F; }
+  .pair-6 { background: #262c66; border-color: #262c66; }
+  .pair-7 { background: #9e2c89; border-color: #9e2c89; }
 </style>
 </head>
 <body>
 
   <h1>🇭🇺🇭🇺🇭🇺🇭🇺🇭🇺🇭🇺<br><br>Velkommen til Ungarn!</h1>
-  <p>Landet som er kendt over hele verden, for alt fra kunst til mad.<br><br>
-    Din makker skal gætte din franske ting. Din makker må stille 10 spørgsmål<br><br>
-    Du må kun svare <b>ja</b>, <b>nej</b> eller <b>pas</b>.<br><br>
-    Hvis din makker gætter din franske ting må I indtage Frankrig på kortet.<br><br>
-    Antal spørgsmål: 10</p>
+  <p>Din makker og du skal matche de ungarnske ord til de tilsvarende dansk.<br><br>
+    Får I mindst 6 ud af 8 korrekte par, må I indtage Ungarn på kortet.<br><br>
+    Tryk på knappen nedenfor, når I mener at I har matchet ordene korrekt.<br><br>
+    <b>I har kun ét forsøg.</b></p>
+
+  <div class="match-area" id="matchArea">
+    <div class="match-col">
+      <div class="match-col-label">Ungarsk</div>
+      <div id="huCol"></div>
+    </div>
+    <div class="match-col">
+      <div class="match-col-label">Dansk</div>
+      <div id="daCol"></div>
+    </div>
+  </div>
 
   <div class="stage">
+    <div class="result" id="result"></div>
     <div id="actionSlot">
-      <button id="rollBtn" onclick="roll()">Vis ungarnske ting</button>
+      <button id="rollBtn" onclick="checkAnswer()" disabled>Afgiv bud</button>
     </div>
     <div class="timer" id="timer"></div>
   </div>
 
   <script>
-    function roll() {
-      const hungarianWords = ["víz", "lábfej", "láb", "fej", "naptár", "holnap", "tegnap", "óra", "jó", "március", "nulla", "kávé", "csirke", "gyomor", "orvos", "programozó", "nagy", "kis", "hogyan", "és"];
-      const danishWords = ["vand", "fod", "ben", "hoved", "kalender", "i morgen", "i går", "time", "god", "marts", "nul", "kaffe", "kylling", "mave", "læge", "programmør", "stor", "lille", "hvordan", "og"];
-      let hungarianList = [];
-      let danishList = [];
+    const hungarianWords = ["víz", "lábfej", "láb", "fej", "naptár", "holnap", "tegnap", "óra", "jó", "március", "nulla", "kávé", "csirke", "gyomor", "orvos", "programozó", "nagy", "kis", "hogyan", "és", "köszönöm", "tíz", "millió", "pincér", "palacsinta", "június", "régi"];
+    const danishWords = ["vand", "fod", "ben", "hoved", "kalender", "i morgen", "i går", "time", "god", "marts", "nul", "kaffe", "kylling", "mave", "læge", "programmør", "stor", "lille", "hvordan", "og", "tak", "ti (10)", "million", "tjener", "pandekage", "juni", "gammel"];
 
-      const n = [];
-      for (let i = 0; i < 5; i++) {
-        let a = Math.floor(Math.random()*20);
-        while(n.includes(a)) {
-          a = Math.floor(Math.random()*20);
-        }
-        n[i] = a;
-        hungarianList[i] = hungarianWords[a];
-        danishList[i] = danishWords[a];
+    let pairs = [];          // [{hu, da}, ...] the 5 chosen words this round
+    let huOrder = [];        // display order of hu words (array of hu strings)
+    let daOrder = [];        // display order of da words (array of da strings)
+    let matches = {};        // huWord -> daWord
+    let pairColor = {};      // huWord -> pair index (0-4), used for both sides
+    let selection = null;    // { side: 'hu'|'da', word: string }
+    let locked = false;      // true once answer has been submitted
+    let nextPairIndex = 0;
+
+    function pickPairs() {
+      const chosen = [];
+      const usedIdx = [];
+      while (chosen.length < 8) {
+        const i = Math.floor(Math.random() * hungarianWords.length);
+        if (usedIdx.includes(i)) continue;
+        usedIdx.push(i);
+        chosen.push({ hu: hungarianWords[i], da: danishWords[i] });
       }
-      shuffleArray(hungarianList);
-      shuffleArray(danishList);
-      console.log(hungarianList);
-      console.log(danishList);
+      return chosen;
+    }
+
+    function shuffleArray(array) {
+      let currentIndex = array.length;
+      while (currentIndex != 0) {
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+      }
+    }
+
+    function generateRound() {
+      pairs = pickPairs();
+      huOrder = pairs.map(p => p.hu);
+      daOrder = pairs.map(p => p.da);
+      shuffleArray(huOrder);
+      shuffleArray(daOrder);
+
+      matches = {};
+      pairColor = {};
+      selection = null;
+      locked = false;
+      nextPairIndex = 0;
+
+      document.getElementById('result').textContent = '';
+      const btn = document.getElementById('rollBtn');
+      btn.disabled = true;
+      btn.textContent = 'Afgiv bud';
+
+      renderColumn('huCol', huOrder, 'hu');
+      renderColumn('daCol', daOrder, 'da');
+    }
+
+    function renderColumn(containerId, words, side) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      words.forEach(word => {
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.className = 'word-item';
+        el.textContent = word;
+        el.dataset.word = word;
+        el.dataset.side = side;
+        el.onclick = () => onWordClick(side, word, el);
+        container.appendChild(el);
+      });
+    }
+
+    function getEl(side, word) {
+      return document.querySelector(`.word-item[data-side="${side}"][data-word="${CSS.escape(word)}"]`);
+    }
+
+    function onWordClick(side, word, el) {
+      if (locked) return;
+
+      const isMatched = side === 'hu' ? (word in matches) : Object.values(matches).includes(word);
+
+      // Clicking an already-matched word: undo that pairing.
+      if (isMatched) {
+        let huWord, daWord;
+        if (side === 'hu') {
+          huWord = word;
+          daWord = matches[word];
+        } else {
+          daWord = word;
+          huWord = Object.keys(matches).find(k => matches[k] === word);
+        }
+        delete matches[huWord];
+        const colorIdx = pairColor[huWord];
+        delete pairColor[huWord];
+        [getEl('hu', huWord), getEl('da', daWord)].forEach(e => {
+          if (!e) return;
+          e.classList.remove('matched', `pair-${colorIdx}`);
+        });
+        updateButtonState();
+        return;
+      }
+
+      // No current selection: select this word.
+      if (!selection) {
+        selection = { side, word };
+        el.classList.add('selected');
+        return;
+      }
+
+      // Clicked the same word again: deselect.
+      if (selection.side === side && selection.word === word) {
+        selection = null;
+        el.classList.remove('selected');
+        return;
+      }
+
+      // Clicked another word on the same side: move selection.
+      if (selection.side === side) {
+        getEl(selection.side, selection.word)?.classList.remove('selected');
+        selection = { side, word };
+        el.classList.add('selected');
+        return;
+      }
+
+      // Clicked a word on the other side: form a pair.
+      const huWord = side === 'hu' ? word : selection.word;
+      const daWord = side === 'da' ? word : selection.word;
+
+      getEl(selection.side, selection.word)?.classList.remove('selected');
+
+      const colorIdx = nextPairIndex % 8;
+      nextPairIndex++;
+      matches[huWord] = daWord;
+      pairColor[huWord] = colorIdx;
+
+      getEl('hu', huWord)?.classList.add('matched', `pair-${colorIdx}`);
+      getEl('da', daWord)?.classList.add('matched', `pair-${colorIdx}`);
+
+      selection = null;
+      updateButtonState();
+    }
+
+    function updateButtonState() {
+      const btn = document.getElementById('rollBtn');
+      btn.disabled = Object.keys(matches).length < 8;
+    }
+
+    function checkAnswer() {
+      if (locked) return;
+      locked = true;
+
+      let correctCount = 0;
+      pairs.forEach(p => {
+        const huEl = getEl('hu', p.hu);
+        const daEl = getEl('da', p.da);
+        const guessedDa = matches[p.hu];
+        const isCorrect = guessedDa === p.da;
+        if (isCorrect) correctCount++;
+
+        [huEl, daEl].forEach(e => {
+          if (!e) return;
+          e.classList.add('locked');
+          e.classList.remove(`pair-${pairColor[p.hu]}`);
+          e.classList.add(isCorrect ? 'correct' : 'incorrect');
+        });
+
+        // If wrong, also mark the danish word they *did* guess (if any) as incorrect.
+        if (!isCorrect && guessedDa) {
+          const wrongDaEl = getEl('da', guessedDa);
+          if (wrongDaEl) {
+            wrongDaEl.classList.remove(`pair-${pairColor[p.hu]}`);
+            wrongDaEl.classList.add('locked', 'incorrect');
+          }
+        }
+      });
+
+      document.querySelectorAll('.word-item').forEach(e => e.classList.add('locked'));
+
+      const passed = correctCount >= 6;
+      document.getElementById('result').textContent =
+        `${correctCount} ud af 8 korrekte! ${passed ? 'I må indtage Ungarn! 🇭🇺' : 'Desværre ikke nok denne gang.'}`;
+
+      const btn = document.getElementById('rollBtn');
+      btn.disabled = true;
+      btn.textContent = 'Bud afgivet';
     }
 
     function startTimer(seconds) {
@@ -157,32 +436,7 @@
       }, 1000);
     }
 
-    function shuffleString(str) {
-        const chars = str.split('');
-
-        for (let i = chars.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [chars[i], chars[j]] = [chars[j], chars[i]];
-        }
-
-        return chars.join('');
-    }
-
-    function shuffleArray(array) {
-      let currentIndex = array.length;
-
-      // While there remain elements to shuffle...
-      while (currentIndex != 0) {
-
-        // Pick a remaining element...
-        let randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-          array[randomIndex], array[currentIndex]];
-      }
-    }
+    generateRound();
   </script>
 
 </body>
